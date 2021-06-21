@@ -5,7 +5,7 @@
         - Some naming conventions are changed (don't use input as a variable!!!)
         - support for $n$ conditioning variables.
 """
-from math import sqrt, prod
+from math import sqrt
 from functools import partial, lru_cache
 
 import numpy as np
