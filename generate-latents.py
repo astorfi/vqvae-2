@@ -17,7 +17,7 @@ from helper import get_device, get_parameter_count
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('path', type=str)
+    parser.add_argument('--path', type=str, default='runs/cifar10-2021-06-21_23-14-30/checkpoints/cifar10-state-dict-0096.pt')
     parser.add_argument('--cpu', action='store_true')
     parser.add_argument('--task', type=str, default='cifar10')
     parser.add_argument('--batch-size', type=int, default=None)
@@ -61,8 +61,17 @@ if __name__ == '__main__':
     spatial_dim = img_shape[-1]
 
     assert cfg.nb_levels == len(cfg.scaling_rates), "Number of levels does not match number of scaling rates!"
+    
+    from functools import reduce  # Required in Python 3.7 or older
+    import operator
+    def prod(iterable):
+        return reduce(operator.mul, iterable, 1)
 
-    code_dims = [spatial_dim // math.prod(cfg.scaling_rates[:i+1]) for i in range(cfg.nb_levels)]
+    code_dims = [spatial_dim // prod(cfg.scaling_rates[:i+1]) for i in range(cfg.nb_levels)]
+    
+    # # For Python 3.8 or newer
+    # code_dims = [spatial_dim // math.prod(cfg.scaling_rates[:i+1]) for i in range(cfg.nb_levels)]
+
     print(f"> Latent code shapes:")
     for i, c in enumerate(code_dims):
         print(f"\tLevel {i+1}: [{c}, {c}]")
